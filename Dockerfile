@@ -13,7 +13,6 @@ RUN apt-get -yqq update \
         libwww-perl \
         liblwp-protocol-https-perl \
         libgd-graph-perl \
-        libgd-graph3d-perl \
   && cd /tmp \
 # download CSF
   && curl -sLo \
@@ -27,13 +26,11 @@ RUN apt-get -yqq update \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
             /tmp/* \
-# create user
-  && useradd -l -M -U \
-        -u 2020 \
-        -c 'User' \
-        -s /bin/bash \
-        -d /home/user \
-        user
+# enable lfd
+  && sed -i \
+	'/^TESTING =/c TESTING = "0"' \
+	/etc/csf/csf.conf \
+  && touch /var/log/lfd.log
 
-#CMD [ "/usr/sbin/csf", "--initup" ]
-CMD [ "/usr/sbin/lfd" ]
+COPY entrypoint.sh /usr/local/bin/
+ENTRYPOINT [ "entrypoint.sh" ]
