@@ -1,3 +1,12 @@
+# [0.2.0](https://github.com/opencloudengineer/csf/compare/v0.1.1...v0.2.0) (2021-02-13)
+
+
+### Features
+
+* separate steps for build & push of docker image & put test image step in between them ([4d97e63](https://github.com/opencloudengineer/csf/commit/4d97e638df994f5d214d71e6eb75dde133cf4c0d))
+
+
+
 ## [0.1.1](https://github.com/opencloudengineer/csf/compare/v0.1.0...v0.1.1) (2021-02-13)
 
 
