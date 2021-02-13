@@ -24,9 +24,42 @@ jobs:
           git-user-name: ${{ github.repository_owner }}
           git-user-email: "${{ github.repository_owner }}@users.noreply.github.com"
 
+      - name: Create Release
+        if: ${{ steps.changelog.outputs.tag }}
+        env:
+          TAG: ${{ steps.changelog.outputs.tag }}
+          MSG: ${{ steps.changelog.outputs.clean_changelog }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo -e "$TAG\n\n$MSG" | hub release create -F- "$TAG"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        if: ${{ steps.changelog.outputs.tag }}
+
+      - name: Build Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          load: true
+          tags: |
+            ghcr.io/${{ env.CI_REPOSITORY_OWNER_SLUG }}/${{ env.CI_REPOSITORY_NAME_SLUG }}:latest
+
+      - name: Test Image
+        run: |
+          echo CSF Version
+          docker run \
+            --entrypoint csf \
+            ghcr.io/${{ env.CI_REPOSITORY_OWNER_SLUG }}/${{ env.CI_REPOSITORY_NAME_SLUG }}:latest \
+            --version
+
+          echo Test with /etc/csf/csftest.pl
+          docker run \
+            --net host \
+            --cap-add=NET_ADMIN \
+            --entrypoint /etc/csf/csftest.pl \
+            ghcr.io/${{ env.CI_REPOSITORY_OWNER_SLUG }}/${{ env.CI_REPOSITORY_NAME_SLUG }}:latest
 
       - name: Log into GitHub Container Registry
         uses: docker/login-action@v1
@@ -36,8 +69,9 @@ jobs:
           password: ${{ secrets.GHCR }}
         if: ${{ steps.changelog.outputs.tag }}
 
-      - name: Build and Push
+      - name: Push Image
         uses: docker/build-push-action@v2
+        if: ${{ steps.changelog.outputs.tag }}
         with:
           context: .
           file: ./Dockerfile
@@ -45,4 +79,3 @@ jobs:
           tags: |
             ghcr.io/${{ env.CI_REPOSITORY_OWNER_SLUG }}/${{ env.CI_REPOSITORY_NAME_SLUG }}:${{ steps.changelog.outputs.tag }}
             ghcr.io/${{ env.CI_REPOSITORY_OWNER_SLUG }}/${{ env.CI_REPOSITORY_NAME_SLUG }}:latest
-        if: ${{ steps.changelog.outputs.tag }}
