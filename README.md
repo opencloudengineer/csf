@@ -4,8 +4,8 @@ dockerized csf
 
 ## test
 
-perl /usr/local/csf/bin/csftest.pl
+`perl /usr/local/csf/bin/csftest.pl`
 
 ## run
 
-docker run -d --name=csf --net host --cap-add=NET_ADMIN ghcr.io/opencloudengineer/csf
+`docker run -d --name=csf --net host --cap-add=NET_ADMIN ghcr.io/opencloudengineer/csf`
