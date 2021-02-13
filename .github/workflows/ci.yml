@@ -19,6 +19,7 @@ jobs:
         uses: TriPSs/conventional-changelog-action@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-version-file: true
           release-count: 0
           git-user-name: ${{ github.repository_owner }}
           git-user-email: "${{ github.repository_owner }}@users.noreply.github.com"

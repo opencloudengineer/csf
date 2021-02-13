@@ -1,7 +1,8 @@
 FROM debian:buster-slim
 
-LABEL io.webscoot.authors="serverlessengineer@gmail.com" \
-      io.webscoot.vendor="Siddharth Tiwari"
+LABEL org.opencontainers.image.source="https://github.com/opencloudengineer/csf" \
+      description="CSF + LFD in Docker" \
+      maintainer="Siddharth Tiwari <serverlessengineer@gmail.com>"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
